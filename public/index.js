@@ -1,0 +1,137 @@
+const pitches = {
+  0: {
+    note: "A",
+    freq: 110,
+  },
+  1: {
+    note: "A♯ / B♭",
+    freq: 116.54,
+  },
+  2: {
+    note: "B",
+    freq: 123.47,
+  },
+  3: {
+    note: "C",
+    freq: 130.81,
+  },
+  4: {
+    note: "C♯ / D♭",
+    freq: 138.59,
+  },
+  5: {
+    note: "D",
+    freq: 146.83,
+  },
+  6: {
+    note: "D♯ / E♭",
+    freq: 155.56,
+  },
+  7: {
+    note: "E",
+    freq: 164.81,
+  },
+  8: {
+    note: "F",
+    freq: 174.61,
+  },
+  9: {
+    note: "F♯ / G♭",
+    freq: 185,
+  },
+  10: {
+    note: "G",
+    freq: 196,
+  },
+  11: {
+    note: "G♯ / A♭",
+    freq: 207.65,
+  },
+  12: {
+    note: "A",
+    freq: 220,
+  },
+  13: {
+    note: "A♯ / B♭",
+    freq: 233.08,
+  },
+  14: {
+    note: "B",
+    freq: 246.94,
+  },
+  15: {
+    note: "C",
+    freq: 261.63,
+  },
+  16: {
+    note: "C♯ / D♭",
+    freq: 277.18,
+  },
+  17: {
+    note: "D",
+    freq: 293.66,
+  },
+  18: {
+    note: "D♯ / E♭",
+    freq: 311.13,
+  },
+  19: {
+    note: "E",
+    freq: 329.63,
+  },
+  20: {
+    note: "F",
+    freq: 349.23,
+  },
+};
+
+const RAMP_VALUE = 0.00001;
+const DEFAULT_DURATION = 0.5;
+
+const noteBucket = document.getElementById("note_bucket");
+const testButton = document.getElementById("test_button");
+let context;
+
+function init() {
+  context = new AudioContext();
+}
+
+function playNote(freq = 110, duration = 0.5) {
+  if (!context) init();
+  const currentTime = context.currentTime;
+  const osc = context.createOscillator();
+  const gain = context.createGain();
+
+  osc.connect(gain);
+  gain.connect(context.destination);
+  gain.gain.setValueAtTime(gain.gain.value, currentTime);
+  gain.gain.exponentialRampToValueAtTime(RAMP_VALUE, currentTime + duration);
+
+  osc.onended = function () {
+    gain.disconnect(context.destination);
+    osc.disconnect(gain);
+  };
+
+  osc.type = "sine";
+  osc.frequency.value = freq;
+  osc.start(currentTime);
+  osc.stop(currentTime + duration);
+}
+
+function playNotes(notes) {
+  const note = notes.shift();
+  console.log("Notes remaining: ", notes.length, notes);
+  console.log("Current Note");
+  console.log(note, pitches[note]);
+  playNote(pitches[note].freq);
+  if (notes.length) {
+    setTimeout(
+      () => playNotes(notes, DEFAULT_DURATION),
+      1000 * DEFAULT_DURATION
+    );
+  }
+}
+
+testButton.addEventListener("click", () =>
+  playNotes(noteBucket.value.match(/\S+/g).map((note) => parseInt(note)))
+);
