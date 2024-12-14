@@ -118,20 +118,19 @@ function playNote(freq = 110, duration = 0.5) {
   osc.stop(currentTime + duration);
 }
 
-function playNotes(notes) {
-  const note = notes.shift();
-  console.log("Notes remaining: ", notes.length, notes);
-  console.log("Current Note");
+function playNotes(notes, pos = 0) {
+  notes = notes || noteBucket.value.match(/\S+/g).map((note) => parseInt(note));
+  if (pos === 0) console.log(notes.length, notes);
+  const note = notes[pos];
+  console.log("Current Pos", pos);
   console.log(note, pitches[note]);
   playNote(pitches[note].freq);
-  if (notes.length) {
+  if (pos < notes.length - 1) {
     setTimeout(
-      () => playNotes(notes, DEFAULT_DURATION),
+      () => playNotes(notes, pos + 1, DEFAULT_DURATION),
       1000 * DEFAULT_DURATION
     );
   }
 }
 
-testButton.addEventListener("click", () =>
-  playNotes(noteBucket.value.match(/\S+/g).map((note) => parseInt(note)))
-);
+testButton.addEventListener("click", () => playNotes());
