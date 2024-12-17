@@ -8,9 +8,6 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "browser-beep": "^1.0.2"
-  },
   "devDependencies": {
     "express": "^4.21.2"
   }
