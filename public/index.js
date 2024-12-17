@@ -87,9 +87,11 @@ const pitches = {
 
 const RAMP_VALUE = 0.00001;
 const DEFAULT_DURATION = 0.5;
+const DEFAULT_COLS = 7;
 
 const noteBucket = document.getElementById("note_bucket");
 const testButton = document.getElementById("test_button");
+const output = document.getElementById("output");
 let context;
 
 function init() {
@@ -118,11 +120,16 @@ function playNote(freq = 110, duration = 0.5) {
   osc.stop(currentTime + duration);
 }
 
+function getNotes() {
+  return noteBucket.value.match(/\S+/g).map((note) => parseInt(note));
+}
+
 function playNotes(notes, pos = 0) {
-  notes = notes || noteBucket.value.match(/\S+/g).map((note) => parseInt(note));
+  notes = notes || getNotes();
   if (pos === 0) console.log(notes.length, notes);
   const note = notes[pos];
   console.log("Current Pos", pos);
+  highlightCurrentNote(pos);
   console.log(note, pitches[note]);
   playNote(pitches[note].freq);
   if (pos < notes.length - 1) {
@@ -133,4 +140,42 @@ function playNotes(notes, pos = 0) {
   }
 }
 
-testButton.addEventListener("click", () => playNotes());
+function setOutput() {
+  const notes = getNotes();
+  const chunked = chunkArray(notes, DEFAULT_COLS);
+  output.innerHTML = "";
+  for (row in chunked) {
+    const newDiv = document.createElement("div");
+    // newDiv.innerText = chunked[row].join("\t");
+    for (col in chunked[row]) {
+      const newNote = document.createElement("span");
+      newNote.innerHTML = chunked[row][col] + "&nbsp;";
+      newDiv.appendChild(newNote);
+    }
+    output.appendChild(newDiv);
+  }
+}
+
+function highlightCurrentNote(pos) {
+  const notes = output.getElementsByTagName("span");
+  for (let i = 0; i < notes.length; i++) {
+    if (i === pos) {
+      notes[i].className = "current";
+    } else {
+      notes[i].className = "";
+    }
+  }
+}
+
+function chunkArray(arr, size) {
+  const chunkedArray = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunkedArray.push(arr.slice(i, i + size));
+  }
+  return chunkedArray;
+}
+
+testButton.addEventListener("click", () => {
+  setOutput();
+  playNotes();
+});

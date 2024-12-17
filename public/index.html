@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chime Checker</title>
+    <style>
+      #output span {
+        width: 3em;
+        display: inline-block;
+      }
+      #output span.current {
+        background-color: yellowgreen;
+      }
+    </style>
   </head>
   <body>
     <h1>Check the chimes</h1>
@@ -13,6 +22,7 @@
     <div>
       <button id="test_button">test</button>
     </div>
+    <div id="output"></div>
     <script src="/index.js"></script>
   </body>
 </html>
