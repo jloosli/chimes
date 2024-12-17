@@ -2,7 +2,7 @@
   "name": "chimes",
   "version": "1.0.0",
   "description": "Chimes checker",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "test"
   },
