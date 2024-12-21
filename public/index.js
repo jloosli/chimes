@@ -144,27 +144,22 @@ function setOutput() {
   const notes = getNotes();
   const chunked = chunkArray(notes, DEFAULT_COLS);
   output.innerHTML = "";
-  for (row in chunked) {
+  chunked.forEach((row) => {
     const newDiv = document.createElement("div");
-    // newDiv.innerText = chunked[row].join("\t");
-    for (col in chunked[row]) {
+    row.forEach((note) => {
       const newNote = document.createElement("span");
-      newNote.innerHTML = chunked[row][col] + "&nbsp;";
+      newNote.innerHTML = note + "&nbsp;";
       newDiv.appendChild(newNote);
-    }
+    });
     output.appendChild(newDiv);
-  }
+  });
 }
 
 function highlightCurrentNote(pos) {
   const notes = output.getElementsByTagName("span");
-  for (let i = 0; i < notes.length; i++) {
-    if (i === pos) {
-      notes[i].className = "current";
-    } else {
-      notes[i].className = "";
-    }
-  }
+  Array.from(notes).forEach((note, index) => {
+    note.classList.toggle("current", index === pos);
+  });
 }
 
 function chunkArray(arr, size) {
