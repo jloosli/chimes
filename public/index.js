@@ -140,8 +140,7 @@ function playNotes(notes, pos = 0) {
   }
 }
 
-function setOutput() {
-  const notes = getNotes();
+function setOutput(notes) {
   const chunked = chunkArray(notes, DEFAULT_COLS);
   output.innerHTML = "";
   chunked.forEach((row) => {
@@ -171,6 +170,31 @@ function chunkArray(arr, size) {
 }
 
 testButton.addEventListener("click", () => {
-  setOutput();
-  playNotes();
+  const notes = getNotes();
+  addNotesToUrl(notes);
+  setOutput(notes);
+  playNotes(notes);
+});
+
+function addNotesToUrl(notes) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("notes", notes.join(" "));
+  window.history.pushState({}, "", url);
+}
+
+function getNotesFromUrl() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get("notes");
+}
+
+function addNotesToTextarea(notes) {
+  noteBucket.value = notes;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const notes = getNotesFromUrl();
+  if (notes) {
+    addNotesToTextarea(notes);
+    setOutput();
+  }
 });
