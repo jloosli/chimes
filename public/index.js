@@ -92,6 +92,7 @@ const DEFAULT_COLS = 7;
 const noteBucket = document.getElementById("note_bucket");
 const testButton = document.getElementById("test_button");
 const output = document.getElementById("output");
+const current_note_box = document.getElementById("current-note");
 let context;
 
 function init() {
@@ -131,6 +132,7 @@ function playNotes(notes, pos = 0) {
   console.log("Current Pos", pos);
   highlightCurrentNote(pos);
   console.log(note, pitches[note]);
+  showCurrentNote(note);
   playNote(pitches[note].freq);
   if (pos < notes.length - 1) {
     setTimeout(
@@ -152,6 +154,10 @@ function setOutput(notes) {
     });
     output.appendChild(newDiv);
   });
+}
+
+function showCurrentNote(note) {
+  current_note_box.innerHTML = pitches[note].note;
 }
 
 function highlightCurrentNote(pos) {
@@ -195,6 +201,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const notes = getNotesFromUrl();
   if (notes) {
     addNotesToTextarea(notes);
-    setOutput();
+    console.log(notes);
+    setOutput(notes);
   }
 });
+
+// function that takes an array of numbers and gives the count of each number in the array
+function countNumbers(arr) {
+  const counts = {};
+  arr.forEach((num) => {
+    counts[num] = counts[num] ? counts[num] + 1 : 1;
+  });
+  return counts;
+}
